@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launch Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="dot"></span>LAUNCH&nbsp;RADAR</div>
+  <div class="topmeta" id="meta">loading snapshot…</div>
+</header>
+<main id="app">
+  <section class="hero">
+    <h1>Which pre-token protocol is worth farming next?</h1>
+    <p class="lede">200 protocols that record no token, ranked by what a token would be worth if the protocol launched one today. The value is fitted from the 128 protocols whose token already trades, not from a TVL table and not from a list of names.</p>
+    <p class="honest">Implied values are this radar&rsquo;s claim, never make.fun&rsquo;s. A record of no token is not proof there is none; nothing here says if or when a token launches.</p>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section class="panel" id="model">
+    <h2>How the value is built</h2>
+    <div class="cols">
+      <div>
+        <p class="formula">value if launches = exp(a + b &middot; ln(forward TVL)) &times; category premium<br>
+        implied value = value if launches &times; launch odds</p>
+        <p id="fitline"></p>
+        <p class="small">Forward TVL carries TVL one quarter on its 7-day change, capped at &plusmn;20%. Launch odds rise with age tracked and no token, from 0.20 toward 0.75. The P10&ndash;P90 band comes from the fit&rsquo;s own residuals.</p>
+      </div>
+      <div>
+        <h3>Does it hold on tokens it never saw?</h3>
+        <p id="validline"></p>
+        <p class="small">The curve is re-fitted on two of every three trading protocols and scored on the held-out third. Crypto market caps are noisy, so the band is wide and the board says so instead of pretending precision.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel controls">
+    <div class="ctl"><label for="deposit">Deposit</label>
+      <select id="deposit"><option value="1000">$1,000</option><option value="10000">$10,000</option></select></div>
+    <div class="ctl"><label for="share">Drop share</label>
+      <select id="share"><option value="0.035">3.5%</option><option value="0.07" selected>7%</option><option value="0.14">14%</option></select></div>
+    <div class="ctl"><label for="cat">Category</label><select id="cat"><option value="">All categories</option></select></div>
+    <div class="ctl"><label for="chain">Chain</label><select id="chain"><option value="">All chains</option></select></div>
+    <div class="ctl"><label for="verdict">Verdict</label>
+      <select id="verdict"><option value="">All verdicts</option><option>FARM</option><option>MARGINAL</option><option>SKIP</option></select></div>
+    <div class="ctl grow"><label for="q">Search</label><input id="q" type="search" placeholder="protocol name or slug"></div>
+    <div class="ctl"><label for="sort">Sort by</label>
+      <select id="sort"><option value="implied">Implied value</option><option value="tvl">TVL</option><option value="odds">Launch odds</option><option value="slice">Your slice</option><option value="ev">Expected value</option></select></div>
+    <div class="tabs" role="tablist">
+      <button id="tabPre" class="tab on" type="button">Pre-token board</button>
+      <button id="tabLive" class="tab" type="button">Already trading</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="count" id="count"></div>
+    <div class="tablewrap"><table id="board">
+      <thead><tr>
+        <th data-k="rank">#</th><th data-k="name">Protocol</th><th data-k="category">Category</th>
+        <th data-k="chains">Chains</th><th data-k="tvl">TVL</th><th data-k="change">7d</th>
+        <th data-k="age">Age</th><th data-k="vifl">Value if launches</th><th data-k="odds">Odds</th>
+        <th data-k="implied">Implied value</th><th data-k="range">P10&ndash;P90</th><th data-k="verdict">Verdict</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <p class="small" id="tablenote"></p>
+  </section>
+
+  <section class="panel" id="detail" hidden></section>
+
+  <section class="panel" id="live" hidden>
+    <h2>Already trading — the market&rsquo;s own values, kept apart</h2>
+    <p class="small">These protocols have a token and a market cap, so they are never ranked on the board. They are the comparables the size curve was fitted on: the top 24 by market cap, with their mcap/TVL ratio.</p>
+    <div class="tablewrap"><table><thead><tr><th>Protocol</th><th>Category</th><th>TVL</th><th>Market cap</th><th>mcap / TVL</th><th>7d</th></tr></thead>
+    <tbody id="liverows"></tbody></table></div>
+  </section>
+
+  <footer class="foot">
+    <p>Source: DefiLlama protocols, snapshot <span id="asof"></span>. Watchlist floor $50M. Board: all 40 watchlist protocols plus the 160 pre-token protocols below the floor with the highest implied value. A farmer&rsquo;s slice assumes the drop share of the value if it launches, times the deposit&rsquo;s share of the farming TVL (10% of TVL). Costs are gas on the protocol&rsquo;s first chain plus yield forgone at 4% APY over 12 weeks.</p>
+    <p>Built by an AI agent for make.fun&rsquo;s token-radar-01 bounty. No network, no wallet, no claim: read the numbers, farm at your own risk.</p>
+  </footer>
+</main>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
